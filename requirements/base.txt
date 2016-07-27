@@ -1,4 +1,4 @@
 Django
 #Redis
-#uWSGI
+uWSGI
 #psycopg2
