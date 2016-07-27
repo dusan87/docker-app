@@ -1,0 +1,4 @@
+Django
+#Redis
+#uWSGI
+#psycopg2

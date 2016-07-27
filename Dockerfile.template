@@ -1,0 +1,36 @@
+FROM ubuntu:14.04
+
+MAINTAINER Revelsystems
+
+# Install required packages and remove the apt packages cache when done.
+
+RUN apt-get update && apt-get install -y \
+        git \
+        python \
+        python-dev \
+        python-setuptools \
+        libpq-dev \
+        nginx \
+        supervisor \
+        sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
+
+
+RUN easy_install pip
+
+ENV PROJECT_HOME=/home/docker
+
+ENV ENV_PROJECT_HOME=PROJECT_HOME
+
+COPY requirements/base.txt /tmp/${PROJECT_HOME}/requirements/base.txt
+RUN pip install -r /tmp/${PROJECT_HOME}/requirements/base.txt
+
+# setup all the configfiles
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+COPY config/nginx.conf /etc/nginx/sites-available/default
+COPY config/supervisor.conf /etc/supervisor/conf.d/
+
+COPY . ${PROJECT_HOME}/
+
+EXPOSE 80
+CMD ["supervisord", "-n"]
